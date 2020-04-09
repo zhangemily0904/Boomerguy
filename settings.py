@@ -1,0 +1,30 @@
+# define colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+DARKGREY = (40, 40, 40)
+LIGHTGREY = (100, 100, 100)
+PLAYERBG = (15, 202, 169)
+
+
+# game settings
+WIDTH = 960
+HEIGHT = 832
+FPS = 60
+TITLE = "Bomberman"
+BOMBSPRITESHEET = "bombsprites.png"
+PLAYERSPRITESHEET = "playersprites.png"
+EXPLOSIONSPRITESHEET = "explosion.png"
+
+TILESIZE = 64
+PLAYERSIZE = 50
+POWERUPSIZE = 50
+GRIDWIDTH = WIDTH//TILESIZE
+GRIDHEIGHT = HEIGHT//TILESIZE
+
+# player setting
+PLAYERSPEED = 200
+
