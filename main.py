@@ -4,7 +4,7 @@ import sys
 from os import path
 from settings import *
 from sprites import *
-from tilemap import *
+from AI import *
 
 class Game(object):
     def __init__(self):
@@ -69,14 +69,8 @@ class Game(object):
                 #build the wall around the board
                 if (row == 0 or row == GRIDHEIGHT-1 or 
                     col == 0 or col == GRIDWIDTH-1):
-                   self.tilesMap[row][col] = 'S' 
-
-        #determines the where the player spawns
-        spawningPosition = random.choice([(1,1), (GRIDHEIGHT-2,1),
-                           (1,GRIDWIDTH-2), (GRIDHEIGHT-2,GRIDWIDTH-2)])
-        row, col = spawningPosition
-        self.tilesMap[row][col] = 'P'
-
+                   self.tilesMap[row][col] = 'S' #SOLID BLOCK
+        
         #randomly spawns power-ups under explodable blocks
         for row in range(len(self.tilesMap)):
             for col in range(len(self.tilesMap[0])):
@@ -98,32 +92,44 @@ class Game(object):
             for col in range(len(self.tilesMap[0])):
                 if self.tilesMap[row][col] == "S":
                     SolidBlock(self, col, row)
-                elif self.tilesMap[row][col] == "E":
-                    ExplodableBlock(self, col, row)
-                elif self.tilesMap[row][col] == 'P':
-                    self.player = Player(self, col, row)
+                if self.tilesMap[row][col] == "E":
+                    ExplodableBlock(self, col, row)          
         for row in range(len(self.itemsMap)):
             for col in range(len(self.itemsMap[0])):
                 if self.itemsMap[row][col] == 'B':
                     BombPowerup(self, col, row)
-                elif self.itemsMap[row][col] == 'S':
+                if self.itemsMap[row][col] == 'S':
                     SpeedPowerup(self, col, row)
-                elif self.itemsMap[row][col] == 'R':
+                if self.itemsMap[row][col] == 'R':
                     FlamePowerup(self, col, row)
+        
+        pos = [(1,1), (GRIDHEIGHT-2,1), (1,GRIDWIDTH-2), (GRIDHEIGHT-2,GRIDWIDTH-2)]
+        probIndex = random.randrange(4)
+        row = pos[probIndex][0]
+        col = pos[probIndex][1]
+        self.player = Player(self, col, row)        
+        pos.pop(probIndex)
+        probIndex = random.randrange(3)
+        row = pos[probIndex][0]
+        col = pos[probIndex][1]
+        self.AIPlayer = AIPlayer(self, col, row)
 
     def new(self):
         # start a new game
         self.allSprites = pg.sprite.Group()
         self.players = pg.sprite.Group()
+        self.AI = pg.sprite.Group()
         self.solidBlocks = pg.sprite.Group()
         self.bombs = pg.sprite.Group()
-        self.tempBombs = pg.sprite.Group()
+        self.bombsAI = pg.sprite.Group()
+        self.tempBombsPlayer = pg.sprite.Group()
+        self.tempBombsAI = pg.sprite.Group()
         self.explosion = pg.sprite.Group()
         self.explodableBlocks = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
         self.mapGenerator()
         self.translateMap()
-                   
+           
     def run(self):
         # Game Loop 
         self.playing = True
@@ -156,6 +162,8 @@ class Game(object):
                     self.player.placeBomb()
                 if event.key == pg.K_r:
                     self.new()
+                if event.key == pg.K_a:
+                    self.AIPlayer.standing = not self.AIPlayer.standing
 
     def drawGrid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -167,12 +175,15 @@ class Game(object):
         # Game Loop - draw
         self.screen.blit(self.bgImg, (0,0))
         self.drawGrid()
-        self.tempBombs.draw(self.screen)
-        self.bombs.draw(self.screen)
         self.powerups.draw(self.screen)
         self.solidBlocks.draw(self.screen)
         self.explodableBlocks.draw(self.screen)
+        self.tempBombsPlayer.draw(self.screen)
+        self.tempBombsAI.draw(self.screen)
+        self.bombsAI.draw(self.screen)
+        self.bombs.draw(self.screen)
         self.players.draw(self.screen)
+        self.AI.draw(self.screen)
         self.explosion.draw(self.screen)        
         pg.display.flip()
 
