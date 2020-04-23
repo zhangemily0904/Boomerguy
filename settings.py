@@ -13,7 +13,7 @@ PLAYERBG = (15, 202, 169)
 # game settings
 WIDTH = 960
 HEIGHT = 832
-FPS = 60
+FPS = 100
 TITLE = "Bomberman"
 BOMBSPRITESHEET = "bombsprites.png"
 PLAYERSPRITESHEET = "playersprites.png"
@@ -27,4 +27,6 @@ GRIDHEIGHT = HEIGHT//TILESIZE
 
 # player setting
 PLAYERSPEED = 200
+AISPEED = 10
+RADIUS = 50
 
