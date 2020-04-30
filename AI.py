@@ -134,15 +134,12 @@ class AIPlayer(pg.sprite.Sprite):
         self.y = y
         self.vel = vec(0,0)
         self.pos = vec(x,y) * TILESIZE
-        print(f'pos: {x,y}')
-        print(f'rect: {self.rect.x, self.rect.y}')
         self.bombsLeft = 1
         self.speed = 10
         self.range = 1
         self.frameRate = 100
         self.path = Astar(self.game, (self.x, self.y), (self.game.player.x, self.game.player.y), False).findPath()
         self.distance = ((self.x-self.game.player.x)**2 + (self.y-self.game.player.y)**2)**0.5
-        print('original' + f'{self.x, self.y}' + f'{self.path}')
         self.target = self.path[0]
         self.radius = 50
         self.hiding = False
@@ -246,7 +243,6 @@ class AIPlayer(pg.sprite.Sprite):
             self.newBomb = Bomb(self.game, self.x, self.y, self.range, True, None)
             self.game.tilesMap[self.y][self.x] = 'B'
             self.runAway(self.newBomb)
-            print('running away')
             self.bombsLeft -= 1
             self.onBomb = True
             self.game.tempBombsAI.add(self.newBomb)
@@ -298,25 +294,23 @@ class AIPlayer(pg.sprite.Sprite):
                 
                 #look at the diagonals for empty spaces 
                 for neighbor in neighbors:
-                    if self.game.tilesMap[neighbor[1]][neighbor[0]] == '-':
+                    if self.game.tilesMap[int(neighbor[1])][int(neighbor[0])] == '-':
                         target = (neighbor[0], neighbor[1])
                         path = Astar(self.game, (self.x, self.y), target, True).findPath()
                         if path != None:
                             self.path = path
-                            print(f'hiding: {self.path}')
                             self.hiding = True
                             return 
 
                 # look at the four directions for empty spaces 
                 if (x < GRIDWIDTH and x > 0 and 
                     y < GRIDHEIGHT and y > 0 and
-                    self.game.tilesMap[y][x] == '-'):
+                    self.game.tilesMap[int(y)][int(x)] == '-'):
                     emptySpaces += 1
                     if emptySpaces > self.range:
                         path = Astar(self.game, (self.x, self.y), (x,y), False).findPath()
                         if path != None:
                             self.path = path
-                            print(f'hiding: {self.path}')
                             self.hiding = True
                             return
                 else: break
@@ -324,8 +318,6 @@ class AIPlayer(pg.sprite.Sprite):
     def moveToTarget(self):
         if not self.standing:
             self.target = self.path[0]
-            print(f'current: {self.pos}')
-            print(f'target: {self.target}')
             self.vel = (self.target - self.pos)
             dist = self.vel.length()
             
@@ -337,7 +329,6 @@ class AIPlayer(pg.sprite.Sprite):
                 else:
                     self.vel *=  self.speed
 
-            print(f'velocity: {self.vel}')
             if dist <= 2: 
                 if len(self.path) > 1:
                     self.pos = self.target
@@ -361,6 +352,8 @@ class AIPlayer(pg.sprite.Sprite):
         if len(hits) > 0:
             self.kill()
             self.game.player.win = True
+            with open('singleScores.txt', 'w') as f:
+                f.write(f"{self.game.playerName}")
             self.game.playing = False
 
     def update(self):
@@ -368,24 +361,30 @@ class AIPlayer(pg.sprite.Sprite):
         self.checkDir()
         self.animate()
         self.moveToTarget()
-        self.placeBomb()
-        if self.onBomb:
-            self.droppingBomb()
 
         for bomb in self.game.bombs:
             if ((self.x - bomb.x == 0 and abs(self.y-bomb.y) <= self.game.player.range) or 
                 (self.y - bomb.y == 0 and abs(self.x-bomb.x) <= self.game.player.range)):
-                if not self.hiding:
-                    bomb.run = True
-                    bomb.AI = True
-                    self.runAway(bomb)
+                bomb.run = True
+                bomb.AI = True
+                self.runAway(bomb)
+
+        for bomb in self.game.tempBombs:
+            if ((self.x - bomb.x == 0 and abs(self.y-bomb.y) <= self.game.player.range) or 
+                (self.y - bomb.y == 0 and abs(self.x-bomb.x) <= self.game.player.range)):
+                bomb.run = True
+                bomb.AI = True
+                self.runAway(bomb)
+                
+        self.placeBomb()
+        if self.onBomb:
+            self.droppingBomb()
 
         timeNow = pg.time.get_ticks()
         if timeNow - self.lastUpdate2 > 2000:
             self.lastUpdate2 = timeNow
             if not self.hiding:
                 self.generateNewPath()
-                print(f'generating new path {self.path}')
 
         if self.game.tilesMap[self.y][self.x] == 'B':
             for dir in [(0,1), (0,-1), (1,0), (-1,0)]:

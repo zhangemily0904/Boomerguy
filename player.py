@@ -175,7 +175,7 @@ class Player(pg.sprite.Sprite):
              self.rect.bottom < self.newBomb.rect.top)):
             self.game.bombs.add(self.newBomb)
             self.onBomb = False
-            
+
     
     #kills the player if collides with flames
     def isKilled(self):
@@ -184,9 +184,9 @@ class Player(pg.sprite.Sprite):
             self.kill()
             if self.game.singlePl:
                 self.win = False
-                self.game.playing = False
+                self.game.playing = False 
             else:
-                self.game.ranking.append((self.playerNum, self.color))
+                self.game.ranking.append(self.playerNum)
                 if len(self.game.players) <= 1:
                     self.game.playing = False
             

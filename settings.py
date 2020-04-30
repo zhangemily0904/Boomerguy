@@ -1,3 +1,4 @@
+import pygame as pg
 # define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -9,12 +10,11 @@ DARKGREY = (40, 40, 40)
 LIGHTGREY = (100, 100, 100)
 PLAYERBG = (15, 202, 169)
 
-
 # game settings
 WIDTH = 960
 HEIGHT = 832
 FPS = 100
-TITLE = "Bomberman"
+TITLE = "Boomerguy"
 BOMBSPRITESHEET = "bombsprites.png"
 PLAYERSPRITESHEET = "playersprites.png"
 EXPLOSIONSPRITESHEET = "explosion.png"
@@ -29,4 +29,10 @@ GRIDHEIGHT = HEIGHT//TILESIZE
 PLAYERSPEED = 200
 AISPEED = 10
 RADIUS = 50
+
+HEADING = 68
+TEXT = 24
+SUBHEADING = 48
+SUBTEXT = 18
+
 

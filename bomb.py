@@ -25,11 +25,11 @@ class Bomb(pg.sprite.Sprite):
     
     def loadImages(self):
         self.bombFrames = [self.game.bombSpritesheet.getImage(66, 288, 15, 16),
-                           self.game.bombSpritesheet.getImage(83, 289, 12, 15),
-                           self.game.bombSpritesheet.getImage(98, 288, 13, 16),
-                           self.game.bombSpritesheet.getImage(115, 288, 12, 16),
-                           self.game.bombSpritesheet.getImage(130, 288, 13, 16),
-                           self.game.bombSpritesheet.getImage(147, 289, 12, 15)]
+                            self.game.bombSpritesheet.getImage(83, 289, 12, 15),
+                            self.game.bombSpritesheet.getImage(98, 288, 13, 16),
+                            self.game.bombSpritesheet.getImage(115, 288, 12, 16),
+                            self.game.bombSpritesheet.getImage(130, 288, 13, 16),
+                            self.game.bombSpritesheet.getImage(147, 289, 12, 15)]
         for frame in self.bombFrames:
             frame.set_colorkey(BLACK)
 
